@@ -1,2 +1,5 @@
+# Application
+
+# Development
 black
 mypy
