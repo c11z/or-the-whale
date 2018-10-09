@@ -3,13 +3,21 @@
 .PHONY: install build format check watch run test console clean_install
 
 IMAGE=pythonmk:latest
-
-INSTALL_TARGETS = Makefile \
+MODD_VERSION = 0.4
+INSTALL_TARGETS = scripts \
+	scripts/modd modd.conf \
+	Makefile \
 	Dockerfile \
 	requirements.txt \
 	main.py \
 	test_main.py \
 	.gitignore
+
+ifeq ($(OS),Darwin)
+	MODD_URL = "https://github.com/cortesi/modd/releases/download/v${MODD_VERSION}/modd-${MODD_VERSION}-osx64.tgz"
+else
+	MODD_URL = "https://github.com/cortesi/modd/releases/download/v${MODD_VERSION}/modd-${MODD_VERSION}-linux64.tgz"
+endif
 
 install: $(INSTALL_TARGETS)
 
@@ -46,7 +54,7 @@ test: check
 		--volume $(CURDIR):/script \
 		--workdir /script \
 		$(IMAGE) \
-		python3 -B -m unittest
+		python3 -B -m pytest
 
 console: build
 	@docker run \
@@ -58,8 +66,14 @@ console: build
 		$(IMAGE) \
 		/bin/bash
 
+watch:
+	scripts/modd
+
 clean_install:
 	rm $(INSTALL_TARGETS)
+
+scripts:
+	mkdir -p $@
 
 Makefile:
 	@test -s $@ || echo "$$Makefile" > $@
@@ -78,6 +92,21 @@ test_main.py:
 
 .gitignore:
 	@test -s $@ || echo "$$gitignore" > $@
+
+scripts/modd:
+	curl ${MODD_URL} -L -o $@.tgz
+	tar -xzf $@.tgz -C scripts/ --strip 1
+	rm $@.tgz
+
+modd.conf:
+	echo "$$modd_config" > $@
+
+define modd_config
+**/*.py {
+	prep: make test
+}
+endef
+export modd_config
 
 define Makefile
 
@@ -98,33 +127,28 @@ define requirements_txt
 
 # Development
 black
+pytest
 mypy
 endef
 export requirements_txt
 
 define main_py
 def main() -> str:
-	return "Hello World"
+    return "Hello World"
 
 
 if __name__ == "__main__":
-	greeting = main()
-	print(greeting)
+    greeting = main()
+    print(greeting)
 endef
 export main_py
 
 define test_main_py
-import unittest
 import main
 
 
-class MainTestCase(unittest.TestCase):
-	def test_main(self):
-		self.assertEqual(main.main(), "Hello World")
-
-
-if __name__ == "__main__":
-	unittest.main()
+def test_main():
+    assert main.main() == "Hello World"
 endef
 export test_main_py
 
