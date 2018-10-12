@@ -5,12 +5,12 @@ MAINTAINER = c11z <corydominguez@gmail.com>
 WEBSITE = https://github.com/c11z/great_illustrated_classic
 LICENSE = MIT
 
-Comparison between origin and abridged versions of the Moby Dick novel.
+Comparison between original and an abridged version of the Moby Dick novel.
 """
 import string
 import cmudict  # type: ignore
-from nltk.tokenize import word_tokenize, sent_tokenize  # type: ignore
 from typing import Tuple
+from nltk.tokenize import word_tokenize, sent_tokenize  # type: ignore
 from curses.ascii import isdigit
 from typing import Dict, Set
 
@@ -176,24 +176,35 @@ def load_texts() -> Tuple[str, str]:
     # Original Source
     # https://www.gutenberg.org/files/2701/old/moby10b.txt
     original = ""
-    with open("/script/data/moby_dick.txt", "r") as f:
+    abridged = ""
+    with open("/script/data/original_moby_dick.txt", "r") as f:
         original = f.read().translate(clean_trans)
     # Abridged not processed yet
-    abridged = ""
+    with open("/script/data/abridged_moby_dick.txt", "r") as f:
+        abridged = f.read().translate(clean_trans)
     return original, abridged
 
 
 def main() -> None:
     original, abridged = load_texts()
     print(count_words(original))
+    print(count_words(abridged))
     print(count_sentences(original))
+    print(count_sentences(abridged))
     print(count_paragraphs(original))
+    print(count_paragraphs(abridged))
     print(calculate_adult_reading_time(original))
+    print(calculate_adult_reading_time(abridged))
     print(count_syllables(original))
+    print(count_syllables(abridged))
     print(flesch_reading_ease(original))
+    print(flesch_reading_ease(abridged))
     print(flesch_kincaid_reading_age(original))
+    print(flesch_kincaid_reading_age(abridged))
     print(coleman_liau_index(original))
+    print(coleman_liau_index(abridged))
     print(automated_readablitity_index(original))
+    print(automated_readablitity_index(abridged))
 
 
 if __name__ == "__main__":
