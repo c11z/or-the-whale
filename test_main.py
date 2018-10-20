@@ -1,8 +1,8 @@
 import main
 
 
-def test_main():
-    assert main.main() == None
+def test_noop():
+    assert main.noop() == None
 
 
 def test_naive_syllables_in_word():
