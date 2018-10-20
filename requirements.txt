@@ -1,5 +1,8 @@
 # Application
 cmudict
+spacy
+numpy
+fire
 nltk
 # Development
 black

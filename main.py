@@ -9,8 +9,9 @@ Comparison between original and an abridged version of the Moby Dick novel.
 """
 import string
 import cmudict  # type: ignore
+import spacy
+from spacy import tokens
 from typing import Tuple
-from nltk.tokenize import word_tokenize, sent_tokenize  # type: ignore
 from curses.ascii import isdigit
 from typing import Dict, Set
 
@@ -28,14 +29,14 @@ clean_trans = str.maketrans("-", " ", '"#$%&()*+,/:;<=>@[\\]^_`{|}~')
 punct_trans = str.maketrans("", "", ".!?")
 
 
-def count_syllables(text: str) -> int:
+def count_syllables(doc: tokens.doc.Doc) -> int:
     """
     Count all the syllables in piece of text. Try to use the cmu phoneme
     Dictionary if possible otherwise fall back to naive algorithm that is
     not as accurate.
     """
     syllable_count = 0
-    for word in word_tokenize(text):
+    for word in doc:
         clean_word = word.lower()
         if phoneme_dict.get(clean_word):
             syllable_count += cmu_syllables_in_word(clean_word)
@@ -122,7 +123,7 @@ def flesch_reading_ease(text: str) -> float:
     ASW: Average number of Syllables per Word
     """
     asl = count_words(text) / count_sentences(text)
-    asw = count_syllables(text) / count_words(text)
+    asw = count_syllables(tokens.Doc()) / count_words(text)
     return 206.835 - (1.015 * asl) - (84.6 * asw)
 
 
@@ -137,7 +138,7 @@ def flesch_kincaid_reading_age(text: str) -> float:
     ASW: Average number of Syllables per Word
     """
     asl = count_words(text) / count_sentences(text)
-    asw = count_syllables(text) / count_words(text)
+    asw = count_syllables(tokens.Doc()) / count_words(text)
     return (0.39 * asl) + (11.8 * asw) - 15.59
 
 
@@ -171,40 +172,8 @@ def count_paragraphs(text: str) -> int:
     return text.count("\n\n")
 
 
-def load_texts() -> Tuple[str, str]:
-    """Loads and reads the book files into variables."""
-    # Original Source
-    # https://www.gutenberg.org/files/2701/old/moby10b.txt
-    original = ""
-    abridged = ""
-    with open("/script/data/original_moby_dick.txt", "r") as f:
-        original = f.read().translate(clean_trans)
-    # Abridged not processed yet
-    with open("/script/data/abridged_moby_dick.txt", "r") as f:
-        abridged = f.read().translate(clean_trans)
-    return original, abridged
-
-
 def main() -> None:
-    original, abridged = load_texts()
-    print(count_words(original))
-    print(count_words(abridged))
-    print(count_sentences(original))
-    print(count_sentences(abridged))
-    print(count_paragraphs(original))
-    print(count_paragraphs(abridged))
-    print(calculate_adult_reading_time(original))
-    print(calculate_adult_reading_time(abridged))
-    print(count_syllables(original))
-    print(count_syllables(abridged))
-    print(flesch_reading_ease(original))
-    print(flesch_reading_ease(abridged))
-    print(flesch_kincaid_reading_age(original))
-    print(flesch_kincaid_reading_age(abridged))
-    print(coleman_liau_index(original))
-    print(coleman_liau_index(abridged))
-    print(automated_readablitity_index(original))
-    print(automated_readablitity_index(abridged))
+    return None
 
 
 if __name__ == "__main__":
