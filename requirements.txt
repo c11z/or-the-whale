@@ -2,8 +2,8 @@
 cmudict
 spacy
 numpy
+pyphen
 fire
-nltk
 # Development
 black
 pytest
