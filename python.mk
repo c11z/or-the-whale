@@ -21,6 +21,7 @@ INSTALL_TARGETS = scripts \
 	Makefile \
 	Dockerfile \
 	requirements.txt \
+	env.list \
 	$(APP_NAME).py \
 	test_$(APP_NAME).py \
 	.gitignore
@@ -52,27 +53,29 @@ format: build_quiet
 		$(IMAGE_TAG) \
 		python3 -m black --quiet /script
 
-check: format
+check: build_quiet
 	@docker run \
 		--rm \
 		--user $(UGID) \
 		--volume $(CURDIR):/script \
 		$(IMAGE_TAG) \
-		python3 -m mypy /script
+		python3 -m mypy --ignore-missing-imports /script
 
 run: build_quiet
 	@docker run \
 		--rm \
 		--user $(UGID) \
 		--volume $(CURDIR):/script \
+		--env-file $(CURDIR)/env.list \
 		$(IMAGE_TAG) \
 		python3 /script/$(APP_NAME).py
 
-test: format
+test: build_quiet
 	@docker run \
 		--rm \
 		--user $(UGID) \
 		--volume $(CURDIR):/script \
+		--env-file $(CURDIR)/env.list \
 		--workdir /script \
 		$(IMAGE_TAG) \
 		python3 -m pytest
@@ -84,6 +87,7 @@ console: build_quiet
 		--interactive \
 		--user $(UGID) \
 		--volume $(CURDIR):/script \
+		--env-file $(CURDIR)/env.list \
 		--workdir /script \
 		$(IMAGE_TAG) \
 		/bin/bash
@@ -109,6 +113,9 @@ $(APP_NAME).py:
 test_$(APP_NAME).py:
 	@test -s $@ || echo "$$test_main_py" > $@
 
+env.list:
+	@test -s $@ || echo "$$env_list" > $@
+
 .gitignore:
 	@test -s $@ || echo "$$gitignore" > $@
 
@@ -122,6 +129,8 @@ modd.conf:
 
 define modd_config
 **/*.py {
+	prep: make format
+	prep: make check
 	prep: make test
 }
 Dockerfile requests.txt {
@@ -177,11 +186,18 @@ def test_$(APP_NAME)():
 endef
 export test_main_py
 
+define env_list
+# Environment variables to be passed to docker containers.
+MY_ENV=example
+endef
+export env_list
+
 define gitignore
 *.py[cod]
 __pycache__
 .mypy_cache
 .pytest_cache
 scripts/modd
+env.list
 endef
 export gitignore
