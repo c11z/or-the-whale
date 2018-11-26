@@ -2,8 +2,9 @@
 cmudict
 spacy
 numpy
-pyphen
 fire
+altair
+pandas
 # Development
 black
 pytest
