@@ -15,7 +15,8 @@ import logging
 import moby
 import altair as alt
 import pandas as pd
-from typing import Optional
+from typing import Optional, Dict
+from collections import defaultdict
 
 OUTPUT_DIR: str = "/script/output/"
 # original source
@@ -38,20 +39,24 @@ def plot() -> None:
             {"x": "E", "y": 2},
         ]
     )
-    alt.Chart(data).mark_bar().encode(
-        x="x:O", y="y:Q"
-    ).save(OUTPUT_DIR + "test.html")
+    alt.Chart(data).mark_bar().encode(x="x:O", y="y:Q").save(OUTPUT_DIR + "test.html")
 
 
 def propn() -> None:
     log.info("collecting proper nouns")
     a = moby.Moby(ABRIDGED_TEXT_PATH, LIMITER)
     o = moby.Moby(ORIGINAL_TEXT_PATH, LIMITER)
-    result = pd.DataFrame(
-        [dict(a.propn().most_common(20)), dict(o.propn().most_common(10))],
-        index=["Abridged", "Original"],
+    combined: Dict[str, Dict[str, int]] = defaultdict(
+        lambda: {"original": 0, "abridged": 0}
     )
-    log.info("top 10 proper nouns\n" + str(result.T))
+    for noun, count in a.propn().items():
+        combined[noun]["abridged"] += count
+    for noun, count in o.propn().items():
+        combined[noun]["original"] += count
+    result = pd.DataFrame(combined).T.sort_values(
+        by=["abridged", "original"], ascending=False
+    )
+    log.info("Proper nouns\n" + str(result))
     return None
 
 
