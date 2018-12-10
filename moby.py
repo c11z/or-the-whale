@@ -31,8 +31,9 @@ class Moby:
     Base class for source texts.
     """
 
-    def __init__(self, text_path: str, limiter: Optional[int] = None):
+    def __init__(self, title: str, text_path: str, limiter: Optional[int] = None):
         text = self._load_text(text_path)
+        self.title = title
         self.ch_text = self._split_by_chapter(text, limiter)
         self.ch_doc = self._make_ch_doc(self.ch_text)
 
@@ -60,9 +61,10 @@ class Moby:
     @staticmethod
     def _make_ch_doc(ch_text: Dict[str, str]) -> Dict[str, tokens.doc.Doc]:
         """Make docs for each chapter."""
+        log.info(f"generating {len(ch_text)} chapters")
         ch_doc = {}
         for chapter, text in ch_text.items():
-            log.debug(f"generating doc for {chapter}")
+            # log.debug(f"generating doc for {chapter}")
             ch_doc[chapter] = _nlp(text)
         return ch_doc
 
@@ -82,6 +84,14 @@ class Moby:
         Look up word in pyphen dictionary and count hyphens in result.
         """
         return len(re.findall(r"[aiouy]+e*|e(?!d$|ly).|[td]ed|le$", word))
+
+    @lru_cache(maxsize=None)
+    def count_tokens(self) -> int:
+        """Counts the number of words in a document."""
+        count = 0
+        for doc in self.ch_doc.values():
+            count += len(doc)
+        return count
 
     @lru_cache(maxsize=None)
     def count_letters(self) -> int:
@@ -185,9 +195,29 @@ class Moby:
         propn_freq: Counter = Counter()
         for doc in self.ch_doc.values():
             for t in doc:
-                if t.pos_ == "PROPN":
-                    propn_freq[t.norm_] += 1
+                if t.tag_ == "NNP":
+                    propn_freq[t.lower_] += 1
         return propn_freq
+
+    def freq(self, word: str, tag: str) -> List[Dict[str, Any]]:
+        result = []
+        index_total = self.count_tokens()
+        index_offset = 0
+        for ch, doc in self.ch_doc.items():
+            chi = int(ch.split("_")[1])
+            for t in doc:
+                if t.lower_ == word and t.tag_ == tag:
+                    result.append(
+                        {
+                            "book": self.title,
+                            "word": word,
+                            "chapter": chi,
+                            "index": index_offset + t.i,
+                            "norm_index": (index_offset + t.i) / index_total,
+                        }
+                    )
+            index_offset += len(doc)
+        return result
 
     def statistics(self) -> Dict[str, Any]:
         return {

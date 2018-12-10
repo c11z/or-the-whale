@@ -12,15 +12,18 @@ import sys
 import fire
 import shutil
 import logging
-import moby
+from moby import Moby
 import altair as alt
 import pandas as pd
 from typing import Optional, Dict
 from collections import defaultdict
 
-OUTPUT_DIR: str = "/script/output/"
+OUTPUT_DIR: str = "/script/output"
+# constant variables for book names
+ABRIDGED = "abridged"
+ORIGINAL = "original"
 # original source
-# https://www.gutenberg.org/files/2701/old/moby10b.txt
+# https://www.gutenberg.org/files/2701/old/0b.txt
 ORIGINAL_TEXT_PATH = "/script/data/original_moby_dick.txt"
 ABRIDGED_TEXT_PATH = "/script/data/abridged_moby_dick.txt"
 # limit the number of chapters to anaylize, None is all chapters
@@ -39,13 +42,34 @@ def plot() -> None:
             {"x": "E", "y": 2},
         ]
     )
-    alt.Chart(data).mark_bar().encode(x="x:O", y="y:Q").save(OUTPUT_DIR + "test.html")
+    alt.Chart(data).mark_bar().encode(x="x:O", y="y:Q").save(f"{OUTPUT_DIR}/test.html")
+
+
+def freq() -> None:
+    log.info("collecting frequency counts")
+    a = Moby(ABRIDGED, ABRIDGED_TEXT_PATH, LIMITER)
+    o = Moby(ORIGINAL, ORIGINAL_TEXT_PATH, LIMITER)
+    search = "queequeg"
+    tag = "NNP"
+    data = alt.Data(values=(a.freq(search, tag) + o.freq(search, tag)))
+
+    alt.Chart(data).mark_bar().encode(
+        x=alt.X(
+            title="normalized index",
+            bin={"extent": [0, 1]},
+            field="norm_index",
+            type="quantitative",
+        ),
+        y=alt.Y(title=f"{search} count", aggregate="count", type="quantitative"),
+        row=alt.Row(field="book", type="nominal"),
+    ).save(f"{OUTPUT_DIR}/{search}_hist.html")
+    return None
 
 
 def propn() -> None:
     log.info("collecting proper nouns")
-    a = moby.Moby(ABRIDGED_TEXT_PATH, LIMITER)
-    o = moby.Moby(ORIGINAL_TEXT_PATH, LIMITER)
+    a = Moby(ABRIDGED, ABRIDGED_TEXT_PATH, LIMITER)
+    o = Moby(ORIGINAL, ORIGINAL_TEXT_PATH, LIMITER)
     combined: Dict[str, Dict[str, int]] = defaultdict(
         lambda: {"original": 0, "abridged": 0}
     )
@@ -53,17 +77,23 @@ def propn() -> None:
         combined[noun]["abridged"] += count
     for noun, count in o.propn().items():
         combined[noun]["original"] += count
-    result = pd.DataFrame(combined).T.sort_values(
-        by=["abridged", "original"], ascending=False
-    )
-    log.info("Proper nouns\n" + str(result))
+    top_a = sorted(
+        combined.items(), key=lambda kv: kv[1].get("abridged", 0), reverse=True
+    )[:20]
+    result = pd.DataFrame(top_a)
+    log.info("top abridged proper nouns\n" + str(result))
+    top_o = sorted(
+        combined.items(), key=lambda kv: kv[1].get("original", 0), reverse=True
+    )[:20]
+    result = pd.DataFrame(top_o)
+    log.info("top original proper nouns\n" + str(result))
     return None
 
 
 def table() -> None:
     log.info("building statistics table")
-    a = moby.Moby(ABRIDGED_TEXT_PATH, LIMITER)
-    o = moby.Moby(ORIGINAL_TEXT_PATH, LIMITER)
+    a = Moby(ABRIDGED, ABRIDGED_TEXT_PATH, LIMITER)
+    o = Moby(ORIGINAL, ORIGINAL_TEXT_PATH, LIMITER)
     result = pd.DataFrame(
         [a.statistics(), o.statistics()], index=["Abridged", "Original"]
     )
