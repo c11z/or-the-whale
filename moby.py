@@ -39,7 +39,7 @@ class Moby:
 
     @staticmethod
     def _split_by_chapter(text: str, limiter: Optional[int]) -> Dict[str, str]:
-        p = re.compile(r"(CHAPTER \d\d?\d?)")
+        p = re.compile(r"(CHAPTER \d\d?\d?)", re.IGNORECASE)
         # split and toss the first title item
         # limiter truncates the number of chapters for faster feedback
         if limiter:

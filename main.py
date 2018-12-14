@@ -22,10 +22,12 @@ OUTPUT_DIR: str = "/script/output"
 # constant variables for book names
 ABRIDGED = "abridged"
 ORIGINAL = "original"
+FRANKENSTEIN = "frankenstein"
 # original source
 # https://www.gutenberg.org/files/2701/old/0b.txt
 ORIGINAL_TEXT_PATH = "/script/data/original_moby_dick.txt"
 ABRIDGED_TEXT_PATH = "/script/data/abridged_moby_dick.txt"
+FRANKENSTEIN_TEXT_PATH = "/script/data/frankenstein.txt"
 # limit the number of chapters to anaylize, None is all chapters
 LIMITER: Optional[int] = None
 
@@ -33,6 +35,16 @@ log = logging.getLogger("main")
 
 
 def sim() -> None:
+    log.info("similarity by chapter")
+    a = Moby(ABRIDGED, ABRIDGED_TEXT_PATH, LIMITER)
+    # o = Moby(ORIGINAL, ORIGINAL_TEXT_PATH, LIMITER)
+    f = Moby(FRANKENSTEIN, FRANKENSTEIN_TEXT_PATH, LIMITER)
+    for a_ch, a_doc in a.ch_doc.items():
+        log.info("\n")
+        for o_ch, o_doc in f.ch_doc.items():
+            cos = a_doc.similarity(o_doc)
+            log.info(f"A({a_ch}), F({o_ch})\t{cos}")
+
     return None
 
 
