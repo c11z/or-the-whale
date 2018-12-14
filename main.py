@@ -32,17 +32,8 @@ LIMITER: Optional[int] = None
 log = logging.getLogger("main")
 
 
-def plot() -> None:
-    data = alt.Data(
-        values=[
-            {"x": "A", "y": 5},
-            {"x": "B", "y": 3},
-            {"x": "C", "y": 6},
-            {"x": "D", "y": 7},
-            {"x": "E", "y": 2},
-        ]
-    )
-    alt.Chart(data).mark_bar().encode(x="x:O", y="y:Q").save(f"{OUTPUT_DIR}/test.html")
+def sim() -> None:
+    return None
 
 
 def freq() -> None:
@@ -85,6 +76,31 @@ def propn() -> None:
     top_o = sorted(
         combined.items(), key=lambda kv: kv[1].get("original", 0), reverse=True
     )[:20]
+    result = pd.DataFrame(top_o)
+    log.info("top original proper nouns\n" + str(result))
+    return None
+
+
+def verb() -> None:
+    log.info("collecting proper nouns")
+    pd.set_option("display.max_rows", 100)
+    a = Moby(ABRIDGED, ABRIDGED_TEXT_PATH, LIMITER)
+    o = Moby(ORIGINAL, ORIGINAL_TEXT_PATH, LIMITER)
+    combined: Dict[str, Dict[str, int]] = defaultdict(
+        lambda: {"original": 0, "abridged": 0}
+    )
+    for verb, count in a.verb().items():
+        combined[verb]["abridged"] += count
+    for verb, count in o.verb().items():
+        combined[verb]["original"] += count
+    top_a = sorted(
+        combined.items(), key=lambda kv: kv[1].get("abridged", 0), reverse=True
+    )
+    result = pd.DataFrame(top_a)
+    log.info("top abridged proper nouns\n" + str(result))
+    top_o = sorted(
+        combined.items(), key=lambda kv: kv[1].get("original", 0), reverse=True
+    )
     result = pd.DataFrame(top_o)
     log.info("top original proper nouns\n" + str(result))
     return None

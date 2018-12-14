@@ -199,6 +199,14 @@ class Moby:
                     propn_freq[t.lower_] += 1
         return propn_freq
 
+    def verb(self) -> Counter:
+        verb_freq: Counter = Counter()
+        for doc in self.ch_doc.values():
+            for t in doc:
+                if t.pos_ == "VERB":
+                    verb_freq[t.lemma_] += 1
+        return verb_freq
+
     def freq(self, word: str, tag: str) -> List[Dict[str, Any]]:
         result = []
         index_total = self.count_tokens()
