@@ -15,7 +15,7 @@ import logging
 from moby import Moby
 import altair as alt
 import pandas as pd
-from typing import Optional, Dict
+from typing import Optional, Dict, Set
 from collections import defaultdict
 
 OUTPUT_DIR: str = "/script/output"
@@ -29,9 +29,28 @@ ORIGINAL_TEXT_PATH = "/script/data/original_moby_dick.txt"
 ABRIDGED_TEXT_PATH = "/script/data/abridged_moby_dick.txt"
 FRANKENSTEIN_TEXT_PATH = "/script/data/frankenstein.txt"
 # limit the number of chapters to anaylize, None is all chapters
-LIMITER: Optional[int] = None
+LIMITER: Optional[int] = 1
 
 log = logging.getLogger("main")
+
+
+def vec() -> None:
+    o = Moby(ORIGINAL, ORIGINAL_TEXT_PATH, LIMITER)
+    a = Moby(ABRIDGED, ABRIDGED_TEXT_PATH, LIMITER)
+    doc = o.ch_doc["chapter_1"]
+    good: Set[str] = set()
+    unknown: Set[str] = set()
+    for t in doc:
+        if not t.is_stop and t.has_vector:
+            good.add(t.text)
+        if not t.is_stop and not t.has_vector:
+            unknown.add(t.text)
+    log.info(f"words with vectors\n{sorted(good)}")
+    log.info("\n")
+    log.info(f"words without vectors\n{unknown}")
+    log.info(f"{doc.similarity(a.ch_doc['chapter_1'])}")
+    log.info(f"{doc.vector}")
+    return None
 
 
 def sim() -> None:
