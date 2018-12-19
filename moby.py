@@ -5,7 +5,7 @@ import string
 import pathlib
 import logging
 import cmudict
-from typing import List, Dict, Optional, Any
+from typing import List, Dict, Set, Optional, Any
 from functools import lru_cache
 from collections import Counter
 import spacy
@@ -196,7 +196,7 @@ class Moby:
         for doc in self.ch_doc.values():
             for t in doc:
                 if t.tag_ == "NNP":
-                    propn_freq[t.lower_] += 1
+                    propn_freq[t.lemma_] += 1
         return propn_freq
 
     def verb(self) -> Counter:
@@ -207,18 +207,18 @@ class Moby:
                     verb_freq[t.lemma_] += 1
         return verb_freq
 
-    def freq(self, word: str, tag: str) -> List[Dict[str, Any]]:
+    def freq(self, words: Set[str], tag: str) -> List[Dict[str, Any]]:
         result = []
         index_total = self.count_tokens()
         index_offset = 0
         for ch, doc in self.ch_doc.items():
             chi = int(ch.split("_")[1])
             for t in doc:
-                if t.lower_ == word and t.tag_ == tag:
+                if t.lemma_ in words and t.tag_ == tag:
                     result.append(
                         {
                             "book": self.title,
-                            "word": word,
+                            "word": t.lemma_,
                             "chapter": chi,
                             "index": index_offset + t.i,
                             "norm_index": (index_offset + t.i) / index_total,

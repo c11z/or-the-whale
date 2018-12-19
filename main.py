@@ -29,7 +29,7 @@ ORIGINAL_TEXT_PATH = "/script/data/original_moby_dick.txt"
 ABRIDGED_TEXT_PATH = "/script/data/abridged_moby_dick.txt"
 FRANKENSTEIN_TEXT_PATH = "/script/data/frankenstein.txt"
 # limit the number of chapters to anaylize, None is all chapters
-LIMITER: Optional[int] = 1
+LIMITER: Optional[int] = None
 
 log = logging.getLogger("main")
 
@@ -67,14 +67,14 @@ def sim() -> None:
     return None
 
 
-def freq() -> None:
+def freq_comp() -> None:
     log.info("collecting frequency counts")
     a = Moby(ABRIDGED, ABRIDGED_TEXT_PATH, LIMITER)
     o = Moby(ORIGINAL, ORIGINAL_TEXT_PATH, LIMITER)
-    search = "queequeg"
+    search = set(["ahab"])
+    title = "_".join(search)
     tag = "NNP"
     data = alt.Data(values=(a.freq(search, tag) + o.freq(search, tag)))
-
     alt.Chart(data).mark_bar().encode(
         x=alt.X(
             title="normalized index",
@@ -82,14 +82,35 @@ def freq() -> None:
             field="norm_index",
             type="quantitative",
         ),
-        y=alt.Y(title=f"{search} count", aggregate="count", type="quantitative"),
+        y=alt.Y(title=f"{title} count", aggregate="count", type="quantitative"),
         row=alt.Row(field="book", type="nominal"),
-    ).save(f"{OUTPUT_DIR}/{search}_hist.html")
+    ).save(f"{OUTPUT_DIR}/{title}_hist.html")
+    return None
+
+
+def freq_missing() -> None:
+    log.info("collecting frequency counts")
+    o = Moby(ORIGINAL, ORIGINAL_TEXT_PATH, LIMITER)
+    search = set(["sperm", "jonah", "bildad", "pip", "leviathan", "right", "greenland"])
+    title = "_".join(sorted(search))
+    tag = "NNP"
+    data = alt.Data(values=(o.freq(search, tag)))
+    alt.Chart(data).mark_bar().encode(
+        x=alt.X(
+            title="Normalized Index",
+            bin={"extent": [0, 1]},
+            field="norm_index",
+            type="quantitative",
+        ),
+        y=alt.Y(title=f"word count", aggregate="count", type="quantitative"),
+        row=alt.Row(field="word", type="nominal"),
+    ).save(f"{OUTPUT_DIR}/{title}_index_hist.html")
     return None
 
 
 def propn() -> None:
     log.info("collecting proper nouns")
+    pd.set_option("display.max_rows", 100)
     a = Moby(ABRIDGED, ABRIDGED_TEXT_PATH, LIMITER)
     o = Moby(ORIGINAL, ORIGINAL_TEXT_PATH, LIMITER)
     combined: Dict[str, Dict[str, int]] = defaultdict(
@@ -101,14 +122,14 @@ def propn() -> None:
         combined[noun]["original"] += count
     top_a = sorted(
         combined.items(), key=lambda kv: kv[1].get("abridged", 0), reverse=True
-    )[:20]
+    )
     result = pd.DataFrame(top_a)
-    log.info("top abridged proper nouns\n" + str(result))
+    log.info(f"top abridged proper nouns\n{result}")
     top_o = sorted(
         combined.items(), key=lambda kv: kv[1].get("original", 0), reverse=True
-    )[:20]
+    )
     result = pd.DataFrame(top_o)
-    log.info("top original proper nouns\n" + str(result))
+    log.info(f"top original proper nouns\n{result}")
     return None
 
 
@@ -128,12 +149,12 @@ def verb() -> None:
         combined.items(), key=lambda kv: kv[1].get("abridged", 0), reverse=True
     )
     result = pd.DataFrame(top_a)
-    log.info("top abridged proper nouns\n" + str(result))
+    log.info(f"top abridged verbs\n{result}")
     top_o = sorted(
         combined.items(), key=lambda kv: kv[1].get("original", 0), reverse=True
     )
     result = pd.DataFrame(top_o)
-    log.info("top original proper nouns\n" + str(result))
+    log.info(f"top original verbs\n{result}")
     return None
 
 
