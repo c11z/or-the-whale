@@ -12,11 +12,12 @@ import sys
 import fire
 import shutil
 import logging
-from moby import Moby
-import altair as alt
-import pandas as pd
 from typing import Optional, Dict, Set
 from collections import defaultdict
+import altair as alt
+import pandas as pd
+import gensim as gen
+from moby import Moby
 
 OUTPUT_DIR: str = "/script/output"
 # constant variables for book names
@@ -29,9 +30,29 @@ ORIGINAL_TEXT_PATH = "/script/data/original_moby_dick.txt"
 ABRIDGED_TEXT_PATH = "/script/data/abridged_moby_dick.txt"
 FRANKENSTEIN_TEXT_PATH = "/script/data/frankenstein.txt"
 # limit the number of chapters to anaylize, None is all chapters
-LIMITER: Optional[int] = None
+LIMITER: Optional[int] = 1
 
 log = logging.getLogger("main")
+
+
+def bago() -> None:
+    o = Moby(ORIGINAL, ORIGINAL_TEXT_PATH, LIMITER)
+    texts = []
+    for ch, doc in o.ch_doc.items():
+        texts.append(
+            [
+                t.lemma_
+                for t in doc
+                if not t.is_stop and not t.is_punct and not t.is_space
+            ]
+        )
+    freq: Dict[str, int] = defaultdict(int)
+    for text in texts:
+        for t in text:
+            freq[t] += 1
+
+    log.debug([k for k, v in freq.items() if v < 3])
+    return None
 
 
 def vec() -> None:

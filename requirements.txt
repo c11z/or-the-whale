@@ -1,10 +1,11 @@
 # Application
+fire
 cmudict
 spacy
 numpy
-fire
 altair
 pandas
+gensim
 # Development
 black
 pytest
