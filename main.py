@@ -12,7 +12,8 @@ import sys
 import fire
 import shutil
 import logging
-from typing import Optional, Dict, Set
+import json
+from typing import Optional, Dict, List, Set
 from collections import defaultdict
 import altair as alt
 import pandas as pd
@@ -30,9 +31,32 @@ ORIGINAL_TEXT_PATH = "/script/data/original_moby_dick.txt"
 ABRIDGED_TEXT_PATH = "/script/data/abridged_moby_dick.txt"
 FRANKENSTEIN_TEXT_PATH = "/script/data/frankenstein.txt"
 # limit the number of chapters to anaylize, None is all chapters
-LIMITER: Optional[int] = 1
+LIMITER: Optional[int] = None
 
 log = logging.getLogger("main")
+
+
+def cache() -> None:
+    o = Moby(ORIGINAL, ORIGINAL_TEXT_PATH, LIMITER)
+    a = Moby(ABRIDGED, ABRIDGED_TEXT_PATH, LIMITER)
+    data: List = []
+    data += o.sent_data()
+    data += a.sent_data()
+    df = pd.DataFrame(data)
+
+    bigram_model = gen.models.Phrases(df.loc[:, "unigram_text"])
+    df["bigram_text"] = df["unigram_text"].map(lambda s: "".join(bigram_model[s]))
+    texts = [s.split() for s in list(df["bigram_text"]) if s]
+    dictionary = gen.corpora.Dictionary(texts)
+    dictionary.compactify()
+    corpus = [dictionary.doc2bow(text) for text in texts]
+    log.info(corpus)
+    tfidf = gen.models.TfidfModel(corpus, id2word=dictionary, normalize=True)
+    corpus_tfidf = tfidf[corpus]
+    lda = gen.models.ldamulticore.LdaMulticore(
+        corpus_tfidf, num_topics=3, id2word=dictionary
+    )
+    return None
 
 
 def bago() -> None:
@@ -93,7 +117,7 @@ def freq_comp() -> None:
     a = Moby(ABRIDGED, ABRIDGED_TEXT_PATH, LIMITER)
     o = Moby(ORIGINAL, ORIGINAL_TEXT_PATH, LIMITER)
     search = set(["ahab"])
-    title = "_".join(search)
+    search_title = "_".join(search)
     tag = "NNP"
     data = alt.Data(values=(a.freq(search, tag) + o.freq(search, tag)))
     alt.Chart(data).mark_bar().encode(
@@ -103,9 +127,9 @@ def freq_comp() -> None:
             field="norm_index",
             type="quantitative",
         ),
-        y=alt.Y(title=f"{title} count", aggregate="count", type="quantitative"),
-        row=alt.Row(field="book", type="nominal"),
-    ).save(f"{OUTPUT_DIR}/{title}_hist.html")
+        y=alt.Y(title=f"{search_title} count", aggregate="count", type="quantitative"),
+        row=alt.Row(field="title", type="nominal"),
+    ).save(f"{OUTPUT_DIR}/{search_title}_hist.html")
     return None
 
 

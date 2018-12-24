@@ -191,6 +191,30 @@ class Moby:
         asw = self.count_syllables() / self.count_words()
         return 206.835 - (1.015 * asl) - (84.6 * asw)
 
+    def sent_data(self) -> List[Dict]:
+        pos_whitelist: Set[str] = set(["ADJ", "NOUN", "PROPN"])
+        data: List[Dict] = []
+        for ch, doc in self.ch_doc.items():
+            chi = int(ch.split("_")[1])
+            for s in doc.sents:
+                data.append(
+                    {
+                        "text": s.text,
+                        "chapter": chi,
+                        "title": self.title,
+                        "unigram_text": " ".join(
+                            [
+                                t.lemma_
+                                for t in s
+                                if t.pos_ in pos_whitelist
+                                and not t.is_stop
+                                and not t.is_punct
+                            ]
+                        ),
+                    }
+                )
+        return data
+
     def propn(self) -> Counter:
         propn_freq: Counter = Counter()
         for doc in self.ch_doc.values():
@@ -217,7 +241,7 @@ class Moby:
                 if t.lemma_ in words and t.tag_ == tag:
                     result.append(
                         {
-                            "book": self.title,
+                            "title": self.title,
                             "word": t.lemma_,
                             "chapter": chi,
                             "index": index_offset + t.i,
