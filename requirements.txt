@@ -2,11 +2,14 @@
 fire
 cmudict
 spacy
-numpy
 altair
 pandas
 gensim
+pytext-nlp
+numpy==1.16.0rc2
 # Development
 black
 pytest
 mypy
+isort
+autoflake

@@ -1,0 +1,149 @@
+{
+  "debug_path": "/script/moby_nn/model.debug",
+  "distributed_world_size": 1,
+  "export_caffe2_path": "/script/moby_nn/model.caffe2.predictor",
+  "load_snapshot_path": "",
+  "modules_save_dir": "",
+  "save_module_checkpoints": false,
+  "save_snapshot_path": "/script/moby_nn/model.pt",
+  "task": {
+    "DocClassificationTask": {
+      "data_handler": {
+        "columns_to_read": [
+          "doc_label",
+          "text"
+        ],
+        "eval_batch_size": 128,
+        "eval_path": "/script/moby_nn/eval.tsv",
+        "max_seq_len": -1,
+        "shuffle": true,
+        "sort_within_batch": true,
+        "test_batch_size": 128,
+        "test_path": "/script/moby_nn/test.tsv",
+        "train_batch_size": 128,
+        "train_path": "/script/moby_nn/train.tsv"
+      },
+      "exporter": null,
+      "features": {
+        "char_feat": null,
+        "dense_feat": null,
+        "dict_feat": null,
+        "freeze": false,
+        "load_path": null,
+        "pretrained_model_embedding": null,
+        "save_path": null,
+        "shared_module_key": null,
+        "word_feat": {
+          "embed_dim": 100,
+          "embedding_init_range": null,
+          "embedding_init_strategy": "random",
+          "export_input_names": [
+            "tokens_vals"
+          ],
+          "freeze": false,
+          "lowercase_tokens": true,
+          "min_freq": 1,
+          "mlp_layer_dims": [],
+          "pretrained_embeddings_path": "",
+          "vocab_file": "",
+          "vocab_from_all_data": false,
+          "vocab_from_train_data": true,
+          "vocab_size": 0
+        }
+      },
+      "featurizer": {
+        "SimpleFeaturizer": {
+          "lowercase_tokens": true,
+          "sentence_markers": null,
+          "split_regex": "\\s+"
+        }
+      },
+      "labels": {
+        "export_output_names": [
+          "doc_scores"
+        ],
+        "label_weights": {}
+      },
+      "metric_reporter": {
+        "output_path": "/script/moby_nn/test_out.txt"
+      },
+      "model": {
+        "decoder": {
+          "freeze": false,
+          "hidden_dims": [],
+          "load_path": null,
+          "save_path": null,
+          "shared_module_key": null
+        },
+        "output_layer": {
+          "freeze": false,
+          "load_path": null,
+          "loss": {
+            "CrossEntropyLoss": {}
+          },
+          "save_path": null,
+          "shared_module_key": null
+        },
+        "representation": {
+          "BiLSTMDocAttention": {
+            "dropout": 0.4,
+            "freeze": false,
+            "load_path": null,
+            "lstm": {
+              "bidirectional": true,
+              "dropout": 0.4,
+              "freeze": false,
+              "load_path": null,
+              "lstm_dim": 32,
+              "num_layers": 1,
+              "save_path": null,
+              "shared_module_key": null
+            },
+            "mlp_decoder": null,
+            "pooling": {
+              "SelfAttention": {
+                "attn_dimension": 64,
+                "dropout": 0.4
+              }
+            },
+            "save_path": null,
+            "shared_module_key": null
+          }
+        }
+      },
+      "optimizer": {
+        "lr": 0.001,
+        "momentum": 0.0,
+        "type": "adam",
+        "weight_decay": 1e-05
+      },
+      "scheduler": {
+        "T_max": 1000,
+        "cooldown": 0,
+        "cut_frac": 0.1,
+        "eta_min": 0,
+        "gamma": 0.1,
+        "lm_gradual_unfreezing": true,
+        "lm_lr_multiplier": 1.0,
+        "lm_use_per_layer_lr": false,
+        "non_pretrained_param_groups": 2,
+        "patience": 5,
+        "ratio": 32,
+        "step_size": 30,
+        "threshold": 0.0001,
+        "threshold_is_absolute": false,
+        "type": "none"
+      },
+      "trainer": {
+        "early_stop_after": 0,
+        "epochs": 1000,
+        "max_clip_norm": null,
+        "random_seed": 0,
+        "report_train_metrics": true
+      }
+    }
+  },
+  "test_out_path": "/script/moby_nn/test_out.txt",
+  "use_cuda_if_available": true,
+  "use_tensorboard": true
+}

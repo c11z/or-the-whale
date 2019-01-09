@@ -7,17 +7,18 @@ LICENSE = MIT
 
 Comparison between original and an abridged version of the Moby Dick novel.
 """
-import os
-import sys
-import fire
-import shutil
+import csv
 import logging
-import json
-from typing import Optional, Dict, List, Set
+import random
+import sys
 from collections import defaultdict
-import altair as alt
-import pandas as pd
-import gensim as gen
+from typing import Dict, List, Optional, Set
+
+import altair as alt  # type: ignore
+import fire  # type: ignore
+import gensim as gen  # type: ignore
+import pandas as pd  # type: ignore
+
 from moby import Moby
 
 OUTPUT_DIR: str = "/script/output"
@@ -36,7 +37,69 @@ LIMITER: Optional[int] = None
 log = logging.getLogger("main")
 
 
-def cache() -> None:
+def pytext() -> None:
+    o = Moby(ORIGINAL, ORIGINAL_TEXT_PATH, LIMITER)
+    train_data = []
+    test_data = []
+    eval_data = []
+    for ch, doc in o.ch_doc.items():
+        for s in doc.sents:
+            r = random.random()
+            if r <= 0.1:
+                eval_data.append(
+                    [
+                        ch,
+                        " ".join(
+                            [
+                                t.lemma_
+                                for t in s
+                                if not t.is_space and not t.is_punct and not t.is_stop
+                            ]
+                        ),
+                    ]
+                )
+            elif r > 0.1 and r <= 0.3:
+                test_data.append(
+                    [
+                        ch,
+                        " ".join(
+                            [
+                                t.lemma_
+                                for t in s
+                                if not t.is_space and not t.is_punct and not t.is_stop
+                            ]
+                        ),
+                    ]
+                )
+            else:
+                train_data.append(
+                    [
+                        ch,
+                        " ".join(
+                            [
+                                t.lemma_
+                                for t in s
+                                if not t.is_space and not t.is_punct and not t.is_stop
+                            ]
+                        ),
+                    ]
+                )
+    with open("/script/moby_nn/train.tsv", "w") as train_fh:
+        writer = csv.writer(train_fh, delimiter="\t")
+        for row in train_data:
+            writer.writerow(row)
+    with open("/script/moby_nn/test.tsv", "w") as test_fh:
+        writer = csv.writer(test_fh, delimiter="\t")
+        for row in test_data:
+            writer.writerow(row)
+    with open("/script/moby_nn/eval.tsv", "w") as test_fh:
+        writer = csv.writer(test_fh, delimiter="\t")
+        for row in eval_data:
+            writer.writerow(row)
+    return None
+
+
+def topic() -> None:
     o = Moby(ORIGINAL, ORIGINAL_TEXT_PATH, LIMITER)
     a = Moby(ABRIDGED, ABRIDGED_TEXT_PATH, LIMITER)
     data: List = []
@@ -116,7 +179,7 @@ def freq_comp() -> None:
     log.info("collecting frequency counts")
     a = Moby(ABRIDGED, ABRIDGED_TEXT_PATH, LIMITER)
     o = Moby(ORIGINAL, ORIGINAL_TEXT_PATH, LIMITER)
-    search = set(["ahab"])
+    search = set(["stubb"])
     search_title = "_".join(search)
     tag = "NNP"
     data = alt.Data(values=(a.freq(search, tag) + o.freq(search, tag)))
@@ -136,15 +199,15 @@ def freq_comp() -> None:
 def freq_missing() -> None:
     log.info("collecting frequency counts")
     o = Moby(ORIGINAL, ORIGINAL_TEXT_PATH, LIMITER)
-    search = set(["sperm", "jonah", "bildad", "pip", "leviathan", "right", "greenland"])
+    search = set(["jonah", "bildad", "pip", "sperm", "right", "greenland"])
     title = "_".join(sorted(search))
     tag = "NNP"
     data = alt.Data(values=(o.freq(search, tag)))
-    alt.Chart(data).mark_bar().encode(
+    alt.Chart(data, width=1000).mark_bar().encode(
         x=alt.X(
-            title="Normalized Index",
-            bin={"extent": [0, 1]},
-            field="norm_index",
+            title="Chapter",
+            bin={"extent": [1, 135], "step": 1},
+            field="chapter",
             type="quantitative",
         ),
         y=alt.Y(title=f"word count", aggregate="count", type="quantitative"),
@@ -155,7 +218,7 @@ def freq_missing() -> None:
 
 def propn() -> None:
     log.info("collecting proper nouns")
-    pd.set_option("display.max_rows", 100)
+    pd.set_option("display.max_rows", 500)
     a = Moby(ABRIDGED, ABRIDGED_TEXT_PATH, LIMITER)
     o = Moby(ORIGINAL, ORIGINAL_TEXT_PATH, LIMITER)
     combined: Dict[str, Dict[str, int]] = defaultdict(

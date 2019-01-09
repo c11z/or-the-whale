@@ -1,17 +1,14 @@
-import os
-import re
-import numpy
-import string
-import pathlib
 import logging
-import cmudict
-from typing import List, Dict, Set, Optional, Any
-from functools import lru_cache
+import re
+import string
 from collections import Counter
-import spacy
-from spacy import attrs
-from spacy import tokens
-from spacy import vocab
+from functools import lru_cache
+from typing import Any, Dict, List, Optional, Set
+
+import cmudict  # type: ignore
+import numpy  # type: ignore
+import spacy  # type: ignore
+from spacy import attrs, tokens, vocab
 
 # Average reading speeds of people.
 CHILD_WPM = 180

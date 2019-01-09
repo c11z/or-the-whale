@@ -51,7 +51,10 @@ format: build_quiet
 		--user $(UGID) \
 		--volume $(CURDIR):/script \
 		$(IMAGE_TAG) \
-		python3 -m black --quiet /script
+		/bin/bash -c \
+		"python3 -m isort -rc /script && \
+		python3 -m autoflake -r --in-place --remove-unused-variables /script && \
+		python3 -m black --quiet /script"
 
 check: build_quiet
 	@docker run \
@@ -59,7 +62,7 @@ check: build_quiet
 		--user $(UGID) \
 		--volume $(CURDIR):/script \
 		$(IMAGE_TAG) \
-		python3 -m mypy --ignore-missing-imports /script
+		python3 -m mypy /script
 
 run: build_quiet
 	@docker run \

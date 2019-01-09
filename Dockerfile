@@ -4,7 +4,11 @@ LABEL maintainer=corydominguez@gmail.com
 RUN apt update && \
 	apt upgrade -y && \
 	apt install -y \
-	gcc
+	build-essential \
+	cmake \
+	gcc \
+	protobuf-compiler \
+	libprotoc-dev
 
 COPY requirements.txt /
 RUN pip install -r /requirements.txt

@@ -1,5 +1,4 @@
 from moby import Moby
-from typing import Optional
 
 TEST_PATH = "/script/data/test.txt"
 
