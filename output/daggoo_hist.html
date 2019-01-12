@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .vega-actions a {
+        margin-right: 12px;
+        color: #757575;
+        font-weight: normal;
+        font-size: 13px;
+    }
+    .error {
+        color: red;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega@4"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-lite@2.6.0"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-embed@3"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+      var spec = {"config": {"view": {"width": 400, "height": 300}}, "data": {"values": [{"title": "abridged", "word": "daggoo", "chapter": 4, "index": 5319, "norm_index": 0.25550004803535403}, {"title": "abridged", "word": "daggoo", "chapter": 5, "index": 6360, "norm_index": 0.3055048515707561}, {"title": "abridged", "word": "daggoo", "chapter": 5, "index": 6449, "norm_index": 0.30977999807858586}, {"title": "abridged", "word": "daggoo", "chapter": 5, "index": 6945, "norm_index": 0.33360553367278317}, {"title": "abridged", "word": "daggoo", "chapter": 5, "index": 6970, "norm_index": 0.33480641752329715}, {"title": "abridged", "word": "daggoo", "chapter": 8, "index": 9641, "norm_index": 0.4631088481122106}, {"title": "abridged", "word": "daggoo", "chapter": 8, "index": 10113, "norm_index": 0.4857815352099145}, {"title": "abridged", "word": "daggoo", "chapter": 11, "index": 12855, "norm_index": 0.6174944759342876}, {"title": "abridged", "word": "daggoo", "chapter": 11, "index": 12944, "norm_index": 0.6217696224421174}, {"title": "abridged", "word": "daggoo", "chapter": 11, "index": 13053, "norm_index": 0.6270054760303584}, {"title": "abridged", "word": "daggoo", "chapter": 14, "index": 15331, "norm_index": 0.736430012489192}, {"title": "abridged", "word": "daggoo", "chapter": 17, "index": 19749, "norm_index": 0.9486502065520223}, {"title": "original", "word": "daggoo", "chapter": 27, "index": 55998, "norm_index": 0.20283838998522125}, {"title": "original", "word": "daggoo", "chapter": 27, "index": 56063, "norm_index": 0.20307383581094787}, {"title": "original", "word": "daggoo", "chapter": 27, "index": 56141, "norm_index": 0.2033563708018198}, {"title": "original", "word": "daggoo", "chapter": 27, "index": 56216, "norm_index": 0.2036280390622736}, {"title": "original", "word": "daggoo", "chapter": 34, "index": 70731, "norm_index": 0.25620490306876464}, {"title": "original", "word": "daggoo", "chapter": 34, "index": 70928, "norm_index": 0.25691848503289}, {"title": "original", "word": "daggoo", "chapter": 36, "index": 76217, "norm_index": 0.2760765307600916}, {"title": "original", "word": "daggoo", "chapter": 36, "index": 76350, "norm_index": 0.27655828914196295}, {"title": "original", "word": "daggoo", "chapter": 36, "index": 76464, "norm_index": 0.27697122489785275}, {"title": "original", "word": "daggoo", "chapter": 40, "index": 82533, "norm_index": 0.2989546205337738}, {"title": "original", "word": "daggoo", "chapter": 40, "index": 82610, "norm_index": 0.299233533281173}, {"title": "original", "word": "daggoo", "chapter": 40, "index": 82690, "norm_index": 0.2995233127589904}, {"title": "original", "word": "daggoo", "chapter": 48, "index": 105002, "norm_index": 0.380342809122258}, {"title": "original", "word": "daggoo", "chapter": 48, "index": 105157, "norm_index": 0.38090425686052914}, {"title": "original", "word": "daggoo", "chapter": 48, "index": 105258, "norm_index": 0.3812701034512736}, {"title": "original", "word": "daggoo", "chapter": 59, "index": 132565, "norm_index": 0.48018270596076384}, {"title": "original", "word": "daggoo", "chapter": 59, "index": 132662, "norm_index": 0.4805340635776174}, {"title": "original", "word": "daggoo", "chapter": 59, "index": 132798, "norm_index": 0.481026688689907}, {"title": "original", "word": "daggoo", "chapter": 61, "index": 136772, "norm_index": 0.4954214842504854}, {"title": "original", "word": "daggoo", "chapter": 61, "index": 138007, "norm_index": 0.4998949549392912}, {"title": "original", "word": "daggoo", "chapter": 64, "index": 140262, "norm_index": 0.5080631139702686}, {"title": "original", "word": "daggoo", "chapter": 72, "index": 154042, "norm_index": 0.5579776290243125}, {"title": "original", "word": "daggoo", "chapter": 74, "index": 159922, "norm_index": 0.57927642064389}, {"title": "original", "word": "daggoo", "chapter": 78, "index": 164243, "norm_index": 0.5949281346895013}, {"title": "original", "word": "daggoo", "chapter": 78, "index": 164388, "norm_index": 0.5954533599930453}, {"title": "original", "word": "daggoo", "chapter": 78, "index": 164525, "norm_index": 0.5959496073488075}, {"title": "original", "word": "daggoo", "chapter": 78, "index": 164736, "norm_index": 0.596713900721551}, {"title": "original", "word": "daggoo", "chapter": 78, "index": 164897, "norm_index": 0.5972970819206583}, {"title": "original", "word": "daggoo", "chapter": 78, "index": 164959, "norm_index": 0.5975216610159668}, {"title": "original", "word": "daggoo", "chapter": 81, "index": 170448, "norm_index": 0.6174041554377119}, {"title": "original", "word": "daggoo", "chapter": 113, "index": 235072, "norm_index": 0.8514880176185923}, {"title": "original", "word": "daggoo", "chapter": 119, "index": 241686, "norm_index": 0.8754455359471442}, {"title": "original", "word": "daggoo", "chapter": 130, "index": 256756, "norm_index": 0.9300327450809933}, {"title": "original", "word": "daggoo", "chapter": 133, "index": 260590, "norm_index": 0.9439204265553913}, {"title": "original", "word": "daggoo", "chapter": 135, "index": 272451, "norm_index": 0.9868838563852907}, {"title": "original", "word": "daggoo", "chapter": 135, "index": 272977, "norm_index": 0.9887891564519401}]}, "mark": "bar", "encoding": {"row": {"type": "nominal", "field": "title"}, "x": {"type": "quantitative", "bin": {"extent": [0, 1]}, "field": "norm_index", "title": "normalized index"}, "y": {"type": "quantitative", "aggregate": "count", "title": "daggoo count"}}, "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json"};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div class="error" style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+
+  </script>
+</body>
+</html>

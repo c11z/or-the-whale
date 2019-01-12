@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .vega-actions a {
+        margin-right: 12px;
+        color: #757575;
+        font-weight: normal;
+        font-size: 13px;
+    }
+    .error {
+        color: red;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega@4"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-lite@2.6.0"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-embed@3"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+      var spec = {"config": {"view": {"width": 400, "height": 300}}, "data": {"values": [{"title": "abridged", "word": "fedallah", "chapter": 6, "index": 7961, "norm_index": 0.38240945335767124}, {"title": "abridged", "word": "fedallah", "chapter": 7, "index": 8385, "norm_index": 0.40277644346238833}, {"title": "abridged", "word": "fedallah", "chapter": 10, "index": 11751, "norm_index": 0.5644634450955903}, {"title": "abridged", "word": "fedallah", "chapter": 10, "index": 11799, "norm_index": 0.5667691420885772}, {"title": "abridged", "word": "fedallah", "chapter": 10, "index": 11859, "norm_index": 0.5696512633298108}, {"title": "abridged", "word": "fedallah", "chapter": 10, "index": 11897, "norm_index": 0.5714766067825919}, {"title": "abridged", "word": "fedallah", "chapter": 10, "index": 11918, "norm_index": 0.5724853492170238}, {"title": "abridged", "word": "fedallah", "chapter": 10, "index": 11995, "norm_index": 0.5761840714766068}, {"title": "abridged", "word": "fedallah", "chapter": 10, "index": 12084, "norm_index": 0.5804592179844366}, {"title": "abridged", "word": "fedallah", "chapter": 10, "index": 12388, "norm_index": 0.5950619656066866}, {"title": "abridged", "word": "fedallah", "chapter": 10, "index": 12436, "norm_index": 0.5973676625996733}, {"title": "abridged", "word": "fedallah", "chapter": 10, "index": 12475, "norm_index": 0.5992410414064752}, {"title": "abridged", "word": "fedallah", "chapter": 10, "index": 12483, "norm_index": 0.5996253242386397}, {"title": "abridged", "word": "fedallah", "chapter": 12, "index": 14056, "norm_index": 0.6751849361129791}, {"title": "abridged", "word": "fedallah", "chapter": 12, "index": 14079, "norm_index": 0.676289749255452}, {"title": "abridged", "word": "fedallah", "chapter": 14, "index": 15396, "norm_index": 0.7395523105005284}, {"title": "abridged", "word": "fedallah", "chapter": 14, "index": 15422, "norm_index": 0.7408012297050629}, {"title": "abridged", "word": "fedallah", "chapter": 14, "index": 15507, "norm_index": 0.7448842347968104}, {"title": "abridged", "word": "fedallah", "chapter": 14, "index": 15592, "norm_index": 0.748967239888558}, {"title": "abridged", "word": "fedallah", "chapter": 15, "index": 17487, "norm_index": 0.8399942357575175}, {"title": "abridged", "word": "fedallah", "chapter": 16, "index": 18666, "norm_index": 0.8966279181477568}, {"title": "abridged", "word": "fedallah", "chapter": 16, "index": 18932, "norm_index": 0.9094053223172255}, {"title": "abridged", "word": "fedallah", "chapter": 17, "index": 19160, "norm_index": 0.920357383033913}, {"title": "abridged", "word": "fedallah", "chapter": 17, "index": 19187, "norm_index": 0.9216543375924681}, {"title": "abridged", "word": "fedallah", "chapter": 17, "index": 19356, "norm_index": 0.9297723124219426}, {"title": "abridged", "word": "fedallah", "chapter": 17, "index": 19503, "norm_index": 0.9368335094629647}, {"title": "abridged", "word": "fedallah", "chapter": 17, "index": 19540, "norm_index": 0.9386108175617254}, {"title": "original", "word": "fedallah", "chapter": 48, "index": 102793, "norm_index": 0.3723412732910255}, {"title": "original", "word": "fedallah", "chapter": 48, "index": 103003, "norm_index": 0.37310194442029615}, {"title": "original", "word": "fedallah", "chapter": 48, "index": 104493, "norm_index": 0.37849908719464487}, {"title": "original", "word": "fedallah", "chapter": 50, "index": 108926, "norm_index": 0.3945564925092005}, {"title": "original", "word": "fedallah", "chapter": 50, "index": 109929, "norm_index": 0.3981896027123359}, {"title": "original", "word": "fedallah", "chapter": 50, "index": 110018, "norm_index": 0.3985119823814077}, {"title": "original", "word": "fedallah", "chapter": 51, "index": 110367, "norm_index": 0.39977614535338607}, {"title": "original", "word": "fedallah", "chapter": 73, "index": 155999, "norm_index": 0.5650663595004202}, {"title": "original", "word": "fedallah", "chapter": 73, "index": 156138, "norm_index": 0.5655698513431279}, {"title": "original", "word": "fedallah", "chapter": 73, "index": 156421, "norm_index": 0.5665949462459069}, {"title": "original", "word": "fedallah", "chapter": 73, "index": 156862, "norm_index": 0.5681923556173751}, {"title": "original", "word": "fedallah", "chapter": 73, "index": 156931, "norm_index": 0.5684422904169927}, {"title": "original", "word": "fedallah", "chapter": 73, "index": 156977, "norm_index": 0.5686089136167377}, {"title": "original", "word": "fedallah", "chapter": 73, "index": 157251, "norm_index": 0.5696014083282622}, {"title": "original", "word": "fedallah", "chapter": 73, "index": 157832, "norm_index": 0.5717059317859109}, {"title": "original", "word": "fedallah", "chapter": 99, "index": 209003, "norm_index": 0.7570597525283259}, {"title": "original", "word": "fedallah", "chapter": 100, "index": 213320, "norm_index": 0.7726969776000464}, {"title": "original", "word": "fedallah", "chapter": 100, "index": 213324, "norm_index": 0.7727114665739372}, {"title": "original", "word": "fedallah", "chapter": 130, "index": 255756, "norm_index": 0.9264105016082761}, {"title": "original", "word": "fedallah", "chapter": 130, "index": 255826, "norm_index": 0.9266640586513664}, {"title": "original", "word": "fedallah", "chapter": 130, "index": 256764, "norm_index": 0.9300617230287751}, {"title": "original", "word": "fedallah", "chapter": 132, "index": 260308, "norm_index": 0.9428989538960851}, {"title": "original", "word": "fedallah", "chapter": 133, "index": 261309, "norm_index": 0.9465248196122751}, {"title": "original", "word": "fedallah", "chapter": 133, "index": 262305, "norm_index": 0.9501325741111014}, {"title": "original", "word": "fedallah", "chapter": 133, "index": 262553, "norm_index": 0.9510308904923354}, {"title": "original", "word": "fedallah", "chapter": 133, "index": 263295, "norm_index": 0.9537185951490915}, {"title": "original", "word": "fedallah", "chapter": 134, "index": 268014, "norm_index": 0.9708119620968443}]}, "mark": "bar", "encoding": {"row": {"type": "nominal", "field": "title"}, "x": {"type": "quantitative", "bin": {"extent": [0, 1]}, "field": "norm_index", "title": "normalized index"}, "y": {"type": "quantitative", "aggregate": "count", "title": "fedallah count"}}, "$schema": "https://vega.github.io/schema/vega-lite/v2.6.0.json"};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div class="error" style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+
+  </script>
+</body>
+</html>

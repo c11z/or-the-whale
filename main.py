@@ -179,7 +179,7 @@ def freq_comp() -> None:
     log.info("collecting frequency counts")
     a = Moby(ABRIDGED, ABRIDGED_TEXT_PATH, LIMITER)
     o = Moby(ORIGINAL, ORIGINAL_TEXT_PATH, LIMITER)
-    search = set(["stubb"])
+    search = set(["daggoo"])
     search_title = "_".join(search)
     tag = "NNP"
     data = alt.Data(values=(a.freq(search, tag) + o.freq(search, tag)))
