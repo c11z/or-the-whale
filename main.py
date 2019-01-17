@@ -8,6 +8,7 @@ LICENSE = MIT
 Comparison between original and an abridged version of the Moby Dick novel.
 """
 import csv
+import json
 import logging
 import random
 import sys
@@ -171,6 +172,58 @@ def sim() -> None:
         for o_ch, o_doc in f.ch_doc.items():
             cos = a_doc.similarity(o_doc)
             log.info(f"A({a_ch}), F({o_ch})\t{cos}")
+
+    return None
+
+
+def freq_data() -> None:
+
+    a = Moby(ABRIDGED, ABRIDGED_TEXT_PATH, LIMITER)
+    o = Moby(ORIGINAL, ORIGINAL_TEXT_PATH, LIMITER)
+    search = set(
+        [
+            "ahab",
+            "stubb",
+            "queequeg",
+            "starbuck",
+            "pequod",
+            "flask",
+            "nantucket",
+            "moby",
+            "peleg",
+            "tashtego",
+            "daggoo",
+            "fedallah",
+            "jonah",
+            "bildad",
+            "pip",
+            "sperm",
+            "right",
+            "greenland",
+        ]
+    )
+    tag = "NNP"
+    data = a.freq(search, tag) + o.freq(search, tag)
+
+    with open("/script/output/freq.json", "w") as fh:
+        json.dump(data, fh)
+
+    scatter = []
+    for word in search:
+        o_count = 0
+        a_count = 0
+        for d in data:
+            if d["word"] == word:
+                if d["title"] == "original":
+                    o_count += 1
+                else:
+                    a_count += 1
+        scatter.append(
+            {"word": word.capitalize(), "o_count": o_count, "a_count": a_count}
+        )
+
+    with open("/script/output/scatter.json", "w") as fh:
+        json.dump(scatter, fh)
 
     return None
 

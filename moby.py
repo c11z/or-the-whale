@@ -235,11 +235,11 @@ class Moby:
         for ch, doc in self.ch_doc.items():
             chi = int(ch.split("_")[1])
             for t in doc:
-                if t.lemma_ in words and t.tag_ == tag:
+                if t.lower_ in words and t.tag_ == tag:
                     result.append(
                         {
                             "title": self.title,
-                            "word": t.lemma_,
+                            "word": t.lower_,
                             "chapter": chi,
                             "index": index_offset + t.i,
                             "norm_index": (index_offset + t.i) / index_total,
