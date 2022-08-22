@@ -6,7 +6,7 @@ altair
 pandas
 gensim
 pytext-nlp
-numpy==1.16.0rc2
+numpy==1.22.0
 # Development
 black
 pytest
